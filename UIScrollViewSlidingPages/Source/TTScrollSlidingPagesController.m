@@ -135,7 +135,7 @@
         topScrollViewWrapperContainer.clipsToBounds = YES;
         [self.view addSubview:topScrollViewWrapperContainer];
         
-        topScrollViewWrapper = [[TTScrollViewWrapper alloc] initWithFrame:CGRectMake(0, nextYPosition, self.view.frame.size.width, self.titleScrollerHeight) andUIScrollView:topScrollView];//make the view to put the scroll view inside which will allow the background colour, and allow dragging from anywhere in this wrapper to be passed to the scrollview.
+        topScrollViewWrapper = [[TTScrollViewWrapper alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.titleScrollerHeight) andUIScrollView:topScrollView];//make the view to put the scroll view inside which will allow the background colour, and allow dragging from anywhere in this wrapper to be passed to the scrollview.
         topScrollViewWrapper.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         topScrollViewWrapper.backgroundColor = self.titleScrollerBackgroundColour;
         //pass touch events from the wrapper onto the scrollview (so you can drag from the entire width, as the scrollview itself only lives in the very centre, but with clipToBounds turned off)
@@ -198,6 +198,8 @@
 }
 
 -(void)viewDidAppear:(BOOL)animated{
+ 
+    [super viewDidAppear:animated];
     if (!viewDidAppearHasBeenCalled){
         viewDidAppearHasBeenCalled = YES;
         [self reloadPages];
@@ -490,6 +492,8 @@
 
 
 -(void)viewDidLayoutSubviews{
+ 
+    [super viewDidLayoutSubviews];
     //this will get called when the screen rotates, at which point we need to fix the frames of all the subviews to be the new correct x position horizontally. The autolayout mask will automatically change the width for us.
     
     if (!self.titleScrollerHidden && !self.disableTitleScrollerShadow){
@@ -616,6 +620,14 @@
         topScrollView.delegate = self;
     }
     
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate)
+    {
+        [self scrollViewDidEndDecelerating:scrollView];
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
